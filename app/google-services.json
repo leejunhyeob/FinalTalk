@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "687452264588",
+    "firebase_url": "https://finaltalk-3929a.firebaseio.com",
+    "project_id": "finaltalk-3929a",
+    "storage_bucket": "finaltalk-3929a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:687452264588:android:a9df7c2e42fffd0a",
+        "android_client_info": {
+          "package_name": "com.example.finaltalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "687452264588-missff4d8ub0qr18e4s4ralbo1p2ck5m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.finaltalk",
+            "certificate_hash": "688f7c0f49d8d8a2c8369a4090c2838175b6c52f"
+          }
+        },
+        {
+          "client_id": "687452264588-rj8k4midgkstfd1cbbq64snsb1eiaaia.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1dAim8aysUd-ZSNLzcqVqdIRvp26xTQg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "687452264588-rj8k4midgkstfd1cbbq64snsb1eiaaia.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
