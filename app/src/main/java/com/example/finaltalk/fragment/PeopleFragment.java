@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +19,9 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.module.AppGlideModule;
 import com.example.finaltalk.R;
 import com.example.finaltalk.chat.MessageActivity;
 import com.example.finaltalk.model.UserModel;
@@ -27,7 +31,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +69,7 @@ public class PeopleFragment extends Fragment {
         public PeopleFragmentRecyclerViewAdapter() {
             userModels = new ArrayList<>();
             final String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
             FirebaseDatabase.getInstance().getReference().child("users").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -94,7 +104,17 @@ public class PeopleFragment extends Fragment {
             if(nUid.equals(userModels.get(position).uid)){
                 ((CustomViewHolder) holder).textView.setTextColor(Color.RED);
             }
+
             ((CustomViewHolder) holder).textView.setText(userModels.get(position).userName+"("+userModels.get(position).email+")");
+            try{
+                Uri imageurl =  Uri.parse(userModels.get(position).profileImageUrl);
+                Glide.with(PeopleFragment.this).load(imageurl).into(((CustomViewHolder) holder).imageView);
+
+            }catch (Exception e){
+                return;
+            }
+
+
 
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -124,6 +144,7 @@ public class PeopleFragment extends Fragment {
             public CustomViewHolder(View view) {
                 super(view);
                 textView = (TextView) view.findViewById(R.id.frienditem_textview);
+                imageView= (ImageView) view.findViewById(R.id.frienditem_imageview);
             }
         }
     }

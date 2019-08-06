@@ -30,9 +30,6 @@ public class MainActitivy extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sub_main);
 
-
-        Log.d("MainActitivy","여기를 다시오는건가");
-
         passPushTokenToServer();
         getFragmentManager().beginTransaction().replace(R.id.submainactivity_framelayout,new PeopleFragment()).commit();
 

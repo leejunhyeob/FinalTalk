@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.example.finaltalk.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -136,38 +137,40 @@ public class SignupActivity extends AppCompatActivity {
                                 task.getResult().getUser().updateProfile(userProfileChangeRequest);
 
 
-
-
                                 FirebaseStorage.getInstance().getReference().child("userImages").child(uid).putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                                         mStorageRef = FirebaseStorage.getInstance().getReference();
-                                        StorageReference mProfileRef = mStorageRef.child("userImages").child(uid);
-
-                                        Task<byte[]> imagename = mProfileRef.getBytes(1024*1024);
-
-//                                        StorageManager sm = getSystemService(StorageManager.class);
-//                                        StorageVolume volume = sm.getPrimaryStorageVolume();
-//                                        Intent intent = volume.createAccessIntent(Environment.DIRECTORY_DOWNLOADS);
-//                                        startActivityForResult(intent,0);
-//                                        Log.d("Signup","image chk");
-
-
-
-
-                                        //String imageUrl = mProfileRef.getDownloadUrl();
-                                        String imageUrl = task.getResult().getStorage().getDownloadUrl().toString();  //현재 downloadURL을 사용할수없다?? -> 이미자가 안불러짐
-                                        //String imageUrl = "https://firebasestorage.googleapis.com/v0/b/finaltalk-3929a.appspot.com/o/userImages%2F9uv9MmyPi1TbzRkf0DHUA8v2CaL2?alt=media&token=4c21ea13-f1e3-4090-8385-ccb03c873c43";
-                                        UserModel userModel = new UserModel();
-                                        userModel.userName = name.getText().toString();
-                                        userModel.profileImageUrl = imageUrl;
-                                        userModel.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                        userModel.email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-
-                                        FirebaseDatabase.getInstance().getReference().child("users").child(uid).setValue(userModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        mStorageRef.child("userImages").child(uid).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                             @Override
-                                            public void onSuccess(Void aVoid) {
-                                                SignupActivity.this.finish();
+                                            public void onSuccess(Uri uri) {
+                                                UserModel userModel = new UserModel();
+                                                userModel.userName = name.getText().toString();
+                                                userModel.profileImageUrl = uri.toString();
+                                                Log.d("imageurl","imageurl: "+uri.toString());
+                                                userModel.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                                userModel.email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                                                FirebaseDatabase.getInstance().getReference().child("users").child(uid).setValue(userModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        SignupActivity.this.finish();
+                                                    }
+                                                });
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                UserModel userModel = new UserModel();
+                                                userModel.userName = name.getText().toString();
+                                                userModel.profileImageUrl = null;
+                                                userModel.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                                userModel.email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                                                FirebaseDatabase.getInstance().getReference().child("users").child(uid).setValue(userModel).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        SignupActivity.this.finish();
+                                                    }
+                                                });
                                             }
                                         });
                                     }

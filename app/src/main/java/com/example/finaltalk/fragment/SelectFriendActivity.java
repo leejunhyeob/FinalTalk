@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.finaltalk.R;
 import com.example.finaltalk.chat.MessageActivity;
 import com.example.finaltalk.model.ChatModel;
@@ -99,6 +101,13 @@ public class SelectFriendActivity extends AppCompatActivity {
                 ((CustomViewHolder) holder).textView.setTextColor(Color.RED);
             }
             ((CustomViewHolder) holder).textView.setText(userModels.get(position).userName+"("+userModels.get(position).email+")");
+            try{
+                Uri imageurl =  Uri.parse(userModels.get(position).profileImageUrl);
+                Glide.with(SelectFriendActivity.this).load(imageurl).into(((SelectFriendActivity.SelectFriendRecyclerViewAdapter.CustomViewHolder) holder).imageView);
+
+            }catch (Exception e){
+                return;
+            }
 
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -146,6 +155,7 @@ public class SelectFriendActivity extends AppCompatActivity {
                 super(view);
                 textView = (TextView) view.findViewById(R.id.frienditem_textview);
                 checkBox = (CheckBox) view.findViewById(R.id.frienditem_checkbox);
+                imageView = (ImageView) view.findViewById(R.id.frienditem_imageview);
             }
         }
     }

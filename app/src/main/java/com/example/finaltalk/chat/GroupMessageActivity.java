@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.finaltalk.R;
 import com.example.finaltalk.model.ChatModel;
 import com.example.finaltalk.model.NotificationModel;
@@ -246,10 +248,7 @@ public class GroupMessageActivity extends AppCompatActivity {
 
                 //상대방이 보낸 메세지
             }else{
-//                Glide.with(holder.itemView.getContext())
-//                        .load(destinationUserModel.profileImageUrl)
-//                        .apply(new RequestOptions().circleCrop())
-//                        .into(messageViewHolder.imageView_profile);
+
                 messageViewHolder.textView_name.setText(users.get(comments.get(position).uid).userName);
                 messageViewHolder.linearLayout_destination.setVisibility(View.VISIBLE);
                 messageViewHolder.textView_message.setBackgroundResource(R.drawable.leftbubble);

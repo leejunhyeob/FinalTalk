@@ -76,7 +76,7 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.d("messageactivity","messageactivity 실행");
+        Log.d("messageactivity","messageactivity 열림");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
