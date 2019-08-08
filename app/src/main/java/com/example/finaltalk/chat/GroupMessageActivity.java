@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -63,12 +64,16 @@ public class GroupMessageActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private RecyclerView recyclerView;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+    private UserModel destinationUserModel;
+    private UserModel myUserModel;
     int peopleCount = 0;
 
     List<ChatModel.Comment> comments = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         Log.d("GroupMessageActivity","GroupMessageActivity실행");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_message);
         destinationRoom = getIntent().getStringExtra("destinationRoom");
@@ -228,8 +233,8 @@ public class GroupMessageActivity extends AppCompatActivity {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message,parent,false);
-            
-            
+
+
             return new GroupMessageViewHolder(view);
         }
 
@@ -239,6 +244,7 @@ public class GroupMessageActivity extends AppCompatActivity {
 
             //내가 보낸 메세지
             if(comments.get(position).uid.equals(uid)){
+                Glide.with(holder.itemView.getContext()).load(users.get(comments.get(position).uid).profileImageUrl).into(messageViewHolder.imageView_profile);
                 messageViewHolder.textView_message.setText(comments.get(position).message);
                 messageViewHolder.textView_message.setBackgroundResource(R.drawable.rightbubble);
                 messageViewHolder.linearLayout_destination.setVisibility(View.INVISIBLE);
@@ -248,7 +254,7 @@ public class GroupMessageActivity extends AppCompatActivity {
 
                 //상대방이 보낸 메세지
             }else{
-
+                Glide.with(holder.itemView.getContext()).load(users.get(comments.get(position).uid).profileImageUrl).into(messageViewHolder.imageView_profile);
                 messageViewHolder.textView_name.setText(users.get(comments.get(position).uid).userName);
                 messageViewHolder.linearLayout_destination.setVisibility(View.VISIBLE);
                 messageViewHolder.textView_message.setBackgroundResource(R.drawable.leftbubble);
@@ -307,7 +313,7 @@ public class GroupMessageActivity extends AppCompatActivity {
         private class GroupMessageViewHolder extends RecyclerView.ViewHolder {
             public TextView textView_message;
             public TextView textView_name;
-            //public ImageView imageView_profile;
+            public ImageView imageView_profile;
             public LinearLayout linearLayout_destination;
             public LinearLayout linearLayout_main;
             public TextView textView_timestamp;
@@ -323,6 +329,8 @@ public class GroupMessageActivity extends AppCompatActivity {
                 textView_timestamp = (TextView)view.findViewById(R.id.messageItem_textView_timestamp);
                 textView_readCounter_left = (TextView)view.findViewById(R.id.messageItem_textView_readCounter_left);
                 textView_readCounter_right = (TextView)view.findViewById(R.id.messageItem_textView_readCounter_right);
+                imageView_profile = (ImageView) view.findViewById(R.id.messageitem_imageview);
+
             }
         }
     }

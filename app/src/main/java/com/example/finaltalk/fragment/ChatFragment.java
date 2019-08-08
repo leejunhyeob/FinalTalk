@@ -3,7 +3,9 @@ package com.example.finaltalk.fragment;
 import android.app.ActivityOptions;
 import android.app.Fragment;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finaltalk.R;
+//import com.example.finaltalk.chat.GroupMessageActivity;
 import com.example.finaltalk.chat.GroupMessageActivity;
 import com.example.finaltalk.chat.MessageActivity;
 import com.example.finaltalk.model.ChatModel;
@@ -29,11 +32,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
@@ -46,6 +55,7 @@ public class ChatFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
         Log.d("chatfragment","chatfragment 실행");
         View view = inflater.inflate(R.layout.fragment_chat,container,false);
 
@@ -65,6 +75,7 @@ public class ChatFragment extends Fragment {
         private ArrayList<String> destinationUsers = new ArrayList<>();
 
         public ChatRecyclerViewAdapter() {
+
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
             FirebaseDatabase.getInstance().getReference().child("chatrooms").orderByChild("users/"+uid).equalTo(true).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -113,6 +124,7 @@ public class ChatFragment extends Fragment {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     UserModel userModel =  dataSnapshot.getValue(UserModel.class);
                     FirebaseStorage.getInstance().getReference().child("userImages").child(uid);
+
 //                    Glide.with(customViewHolder.itemView.getContext())
 //                            .load(userModel.profileImageUrl)
 //                            .apply(new RequestOptions().circleCrop())
@@ -163,11 +175,11 @@ public class ChatFragment extends Fragment {
                     }
                 }
             });
-
-
-
-
         }
+
+
+
+
 
         @Override
         public int getItemCount() {

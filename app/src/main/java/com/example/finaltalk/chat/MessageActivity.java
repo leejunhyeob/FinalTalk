@@ -1,5 +1,6 @@
 package com.example.finaltalk.chat;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,7 +20,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.finaltalk.R;
+import com.example.finaltalk.fragment.PeopleFragment;
 import com.example.finaltalk.model.ChatModel;
 import com.example.finaltalk.model.NotificationModel;
 import com.example.finaltalk.model.UserModel;
@@ -54,7 +59,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static java.lang.Thread.sleep;
+
 
 
 public class MessageActivity extends AppCompatActivity {
@@ -72,11 +77,14 @@ public class MessageActivity extends AppCompatActivity {
     private ValueEventListener valueEventListener;
     private DatabaseReference databaseReference;
     private UserModel destinationUserModel;
+    private UserModel myUserModel;
     int peopleCount = 0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.d("messageactivity","messageactivity 열림");
+        Log.d("messageactivity","messageactivity 실행");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
@@ -100,14 +108,6 @@ public class MessageActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 checkChatRoom();
-//                                try {
-//                                    sleep(2000);
-//                                } catch (InterruptedException e) {
-//                                    e.printStackTrace();
-//                                }
-//                                button.performClick(); //버튼 한번더 강제 클릭
-
-
                             }
                         });
                     } else {
@@ -246,6 +246,18 @@ public class MessageActivity extends AppCompatActivity {
 
                 }
             });
+            FirebaseDatabase.getInstance().getReference().child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    myUserModel = dataSnapshot.getValue(UserModel.class);
+                    getMessageList();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
 
 
         }
@@ -267,26 +279,22 @@ public class MessageActivity extends AppCompatActivity {
                         comments.add(comment_origin);
 
                     }
-                        Log.d("값 확인","comments size : "+comments.size());
-                       if(comments.size()-1 > 0) {
-                           Log.d("messageactivity","comments.size 가 0이 아님");
-                           //-1
-                           if (!comments.get(comments.size()-1).readUsers.containsKey(uid)) {//여기
-                               FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments").updateChildren(readUsersMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                   @Override
-                                   public void onComplete(@NonNull Task<Void> task) {
+                    if(comments.size()-1 > 0) {
+                        if (!comments.get(comments.size()-1).readUsers.containsKey(uid)) {//여기
+                            FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments").updateChildren(readUsersMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
 
-                                       notifyDataSetChanged();//메세지 갱신
-                                       recyclerView.scrollToPosition(comments.size() - 1);
+                                    notifyDataSetChanged();//메세지 갱신
+                                    recyclerView.scrollToPosition(comments.size() - 1);
 
-                                   }
-                               });
-                           } else {
-                               Log.d("messageActivity", "아니면 여긴가");
-                               notifyDataSetChanged();//메세지 갱신
-                               recyclerView.scrollToPosition(comments.size() - 1);
-                           }
-                       }
+                                }
+                            });
+                        } else {
+                            notifyDataSetChanged();//메세지 갱신
+                            recyclerView.scrollToPosition(comments.size() - 1);
+                        }
+                    }
                 }
 
                 @Override
@@ -308,9 +316,11 @@ public class MessageActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             MessageViewHolder messageViewHolder =  ((MessageViewHolder)holder);
-
             //내가 보낸 메세지
             if(comments.get(position).uid.equals(uid)){
+                Glide.with(holder.itemView.getContext())
+                        .load(myUserModel.profileImageUrl)
+                        .into(messageViewHolder.imageView_profile);
                 messageViewHolder.textView_message.setText(comments.get(position).message);
                 messageViewHolder.textView_message.setBackgroundResource(R.drawable.rightbubble);
                 messageViewHolder.linearLayout_destination.setVisibility(View.INVISIBLE);
@@ -320,10 +330,9 @@ public class MessageActivity extends AppCompatActivity {
 
                 //상대방이 보낸 메세지
             }else{
-//                Glide.with(holder.itemView.getContext())
-//                        .load(destinationUserModel.profileImageUrl)
-//                        .apply(new RequestOptions().circleCrop())
-//                        .into(messageViewHolder.imageView_profile);
+                Glide.with(holder.itemView.getContext())
+                        .load(destinationUserModel.profileImageUrl)
+                        .into(messageViewHolder.imageView_profile);
                 messageViewHolder.textView_name.setText(destinationUserModel.userName);
                 messageViewHolder.linearLayout_destination.setVisibility(View.VISIBLE);
                 messageViewHolder.textView_message.setBackgroundResource(R.drawable.leftbubble);
@@ -380,7 +389,7 @@ public class MessageActivity extends AppCompatActivity {
 
             public TextView textView_message;
             public TextView textView_name;
-            //public ImageView imageView_profile;
+            public ImageView imageView_profile;
             public LinearLayout linearLayout_destination;
             public LinearLayout linearLayout_main;
             public TextView textView_timestamp;
@@ -391,6 +400,7 @@ public class MessageActivity extends AppCompatActivity {
                 super(view);
                 textView_message = (TextView) view.findViewById(R.id.messageItem_textView_message);
                 textView_name = (TextView) view.findViewById(R.id.messageitem_textview_name);
+                imageView_profile = (ImageView) view.findViewById(R.id.messageitem_imageview);
                 linearLayout_destination= (LinearLayout)view.findViewById(R.id.messageItem_linearlayout_destination);
                 linearLayout_main = (LinearLayout)view.findViewById(R.id.messageItem_linearlayout_main);
                 textView_timestamp = (TextView)view.findViewById(R.id.messageItem_textView_timestamp);

@@ -3,9 +3,13 @@ package com.example.finaltalk.fragment;
 import android.app.ActivityOptions;
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.module.AppGlideModule;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.finaltalk.R;
 import com.example.finaltalk.chat.MessageActivity;
 import com.example.finaltalk.model.UserModel;
@@ -35,12 +40,22 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class PeopleFragment extends Fragment {
+    private StorageReference mStorageRef;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -58,7 +73,26 @@ public class PeopleFragment extends Fragment {
             }
         });
 
+//        FloatingActionButton floatingaccountActionButton = view.findViewById(R.id.accountFragment_button_comment);
+//        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startActivity(new Intent(view.getContext(),AccountFragment.class));
+//            }
+//        });
+
         return view;
+    }
+
+    private class CustomViewHolder extends RecyclerView.ViewHolder {
+        public ImageView imageView;
+        public TextView textView;
+
+        public CustomViewHolder(View view) {
+            super(view);
+            textView = (TextView) view.findViewById(R.id.frienditem_textview);
+            imageView= (ImageView) view.findViewById(R.id.frienditem_imageview);
+        }
     }
 
     class PeopleFragmentRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -73,11 +107,12 @@ public class PeopleFragment extends Fragment {
             FirebaseDatabase.getInstance().getReference().child("users").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    mStorageRef = FirebaseStorage.getInstance().getReference();
+
                     userModels.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                         UserModel userModel = snapshot.getValue(UserModel.class);
-
                         userModels.add(userModel);
                     }
                     notifyDataSetChanged();
@@ -90,8 +125,6 @@ public class PeopleFragment extends Fragment {
             });
 
         }
-
-
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend, parent, false);
             //              안드로이드에서 view를 만드는 방법
@@ -101,21 +134,14 @@ public class PeopleFragment extends Fragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
             String nUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            Uri imageurl =  Uri.parse(userModels.get(position).profileImageUrl);
+
             if(nUid.equals(userModels.get(position).uid)){
                 ((CustomViewHolder) holder).textView.setTextColor(Color.RED);
             }
 
             ((CustomViewHolder) holder).textView.setText(userModels.get(position).userName+"("+userModels.get(position).email+")");
-            try{
-                Uri imageurl =  Uri.parse(userModels.get(position).profileImageUrl);
-                Glide.with(PeopleFragment.this).load(imageurl).into(((CustomViewHolder) holder).imageView);
-
-            }catch (Exception e){
-                return;
-            }
-
-
-
+            Glide.with(PeopleFragment.this).load(imageurl).into(((CustomViewHolder) holder).imageView);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -137,15 +163,5 @@ public class PeopleFragment extends Fragment {
             return userModels.size();
         }
 
-        private class CustomViewHolder extends RecyclerView.ViewHolder {
-            public ImageView imageView;
-            public TextView textView;
-
-            public CustomViewHolder(View view) {
-                super(view);
-                textView = (TextView) view.findViewById(R.id.frienditem_textview);
-                imageView= (ImageView) view.findViewById(R.id.frienditem_imageview);
-            }
-        }
     }
 }

@@ -22,8 +22,8 @@
 
     <ImageView
         android:id="@+id/messageitem_imageview"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_marginTop="5dp"/>
 
 

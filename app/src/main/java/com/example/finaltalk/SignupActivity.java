@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -39,6 +40,13 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -150,9 +158,11 @@ public class SignupActivity extends AppCompatActivity {
                                                 Log.d("imageurl","imageurl: "+uri.toString());
                                                 userModel.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                                 userModel.email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
                                                 FirebaseDatabase.getInstance().getReference().child("users").child(uid).setValue(userModel).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
+
                                                         SignupActivity.this.finish();
                                                     }
                                                 });
@@ -180,6 +190,8 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

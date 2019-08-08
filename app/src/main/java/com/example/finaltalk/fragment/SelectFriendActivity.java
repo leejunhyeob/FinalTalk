@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.finaltalk.R;
+import com.example.finaltalk.chat.GroupMessageActivity;
 import com.example.finaltalk.chat.MessageActivity;
 import com.example.finaltalk.model.ChatModel;
 import com.example.finaltalk.model.UserModel;
@@ -48,7 +49,7 @@ public class SelectFriendActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.selectFriendActivity_recyclerview);
         recyclerView.setAdapter(new SelectFriendRecyclerViewAdapter());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        Button button = findViewById(R.id.selectFriendActivity_button);
+        Button button = (Button) findViewById(R.id.selectFriendActivity_button);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +114,7 @@ public class SelectFriendActivity extends AppCompatActivity {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(view.getContext(), MessageActivity.class);
+                    Intent intent = new Intent(view.getContext(), GroupMessageActivity.class);
                     intent.putExtra("destinationUid", userModels.get(position).uid);
                     ActivityOptions activityOptions = null;
 
