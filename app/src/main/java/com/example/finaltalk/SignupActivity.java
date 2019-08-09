@@ -1,20 +1,12 @@
 package com.example.finaltalk;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.os.storage.StorageManager;
-import android.os.storage.StorageVolume;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,8 +14,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.finaltalk.model.UserModel;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -38,15 +33,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -63,11 +49,9 @@ public class SignupActivity extends AppCompatActivity {
     private StorageReference mStorageRef;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) { //회원가입
-        Log.d("SignupActivity","SignupActivity 실행");
+        Log.d("SignupActivity", "SignupActivity 실행");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
@@ -80,10 +64,10 @@ public class SignupActivity extends AppCompatActivity {
         }
 
 
-        profile = (ImageView)findViewById(R.id.signupActivity_imageview_profile);
-        profile.setOnClickListener(new View.OnClickListener(){
+        profile = (ImageView) findViewById(R.id.signupActivity_imageview_profile);
+        profile.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_PICK);
                 intent.setType(MediaStore.Images.Media.CONTENT_TYPE);
                 startActivityForResult(intent, PICK_FROM_ALBUM);
@@ -99,33 +83,33 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(TextUtils.isEmpty(name.getText().toString())){
-                    Toast.makeText(SignupActivity.this,"plz enter your name",Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(name.getText().toString())) {
+                    Toast.makeText(SignupActivity.this, "plz enter your name", Toast.LENGTH_SHORT).show();
                     return;
-                }else if(TextUtils.isEmpty(email.getText().toString())){
-                    Toast.makeText(SignupActivity.this,"plz enter your email",Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(email.getText().toString())) {
+                    Toast.makeText(SignupActivity.this, "plz enter your email", Toast.LENGTH_SHORT).show();
                     return;
-                }else if(TextUtils.isEmpty(password.getText().toString())){
-                    Toast.makeText(SignupActivity.this,"plz enter your password",Toast.LENGTH_SHORT).show();
+                } else if (TextUtils.isEmpty(password.getText().toString())) {
+                    Toast.makeText(SignupActivity.this, "plz enter your password", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(imageUri == null){
-                    imageUri = Uri.parse("android.resource://"+getPackageName()+"/"+ R.drawable.image);
+                if (imageUri == null) {
+                    imageUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.image);
                 }
 
-                runOnUiThread(new Runnable(){
+                runOnUiThread(new Runnable() {
                     @Override
-                    public void run(){
+                    public void run() {
 
-                        mProgressDialog = ProgressDialog.show(SignupActivity.this,"","잠시만 기다려 주세요.",true);
-                        mHandler.postDelayed( new Runnable() {  //handelr -> message나 runnable이라는 오브젝트를 전달/처리 해주는 역할
+                        mProgressDialog = ProgressDialog.show(SignupActivity.this, "", "잠시만 기다려 주세요.", true);
+                        mHandler.postDelayed(new Runnable() {  //handelr -> message나 runnable이라는 오브젝트를 전달/처리 해주는 역할
                             @Override
                             public void run() {
                                 try {
-                                    if (mProgressDialog!=null&&mProgressDialog.isShowing()){// mProgressDialog가 널이 아니고 보여지고있으면??
+                                    if (mProgressDialog != null && mProgressDialog.isShowing()) {// mProgressDialog가 널이 아니고 보여지고있으면??
                                         mProgressDialog.dismiss();
                                     }
-                                } catch ( Exception e ) {
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -135,7 +119,7 @@ public class SignupActivity extends AppCompatActivity {
 
 
                 FirebaseAuth.getInstance()
-                        .createUserWithEmailAndPassword(email.getText().toString(),password.getText().toString())
+                        .createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString())
                         .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -155,7 +139,7 @@ public class SignupActivity extends AppCompatActivity {
                                                 UserModel userModel = new UserModel();
                                                 userModel.userName = name.getText().toString();
                                                 userModel.profileImageUrl = uri.toString();
-                                                Log.d("imageurl","imageurl: "+uri.toString());
+                                                Log.d("imageurl", "imageurl: " + uri.toString());
                                                 userModel.uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                                                 userModel.email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
@@ -192,10 +176,9 @@ public class SignupActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == PICK_FROM_ALBUM && resultCode == RESULT_OK){
+        if (requestCode == PICK_FROM_ALBUM && resultCode == RESULT_OK) {
             profile.setImageURI(data.getData());
             imageUri = data.getData();
         }

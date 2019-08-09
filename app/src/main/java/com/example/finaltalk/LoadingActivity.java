@@ -1,15 +1,15 @@
 package com.example.finaltalk;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -25,7 +25,7 @@ public class LoadingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {  //처음시작 로딩
-        Log.d("LoadingActivity","LoadingActivity 실행");
+        Log.d("LoadingActivity", "LoadingActivity 실행");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -59,7 +59,7 @@ public class LoadingActivity extends AppCompatActivity {
 
         linearLayout.setBackgroundColor(Color.parseColor(splash_background));
 
-        if(caps){
+        if (caps) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(splash_message).setPositiveButton("확인", new DialogInterface.OnClickListener() {
                 @Override
@@ -69,8 +69,8 @@ public class LoadingActivity extends AppCompatActivity {
             });
 
             builder.create().show();
-        }else {
-            startActivity(new Intent(this,LoginActivity.class));
+        } else {
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
 

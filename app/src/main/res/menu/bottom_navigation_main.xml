@@ -8,8 +8,18 @@
         android:id="@+id/action_chat"
         android:icon="@drawable/chating"
         android:title="Chat"/>
+
+    <item
+        android:id="@+id/action_account"
+        android:icon="@drawable/account"
+        android:title="Account"/>
+
     <item
         android:id="@+id/action_logout"
-        android:icon="@drawable/loading"
+        android:icon="@drawable/logout"
         android:title="Logout"/>
+
+
+
+
 </menu>

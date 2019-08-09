@@ -1,10 +1,5 @@
 package com.example.finaltalk.chat;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -16,9 +11,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.finaltalk.R;
 import com.example.finaltalk.model.ChatModel;
 import com.example.finaltalk.model.NotificationModel;
@@ -69,20 +69,21 @@ public class GroupMessageActivity extends AppCompatActivity {
     int peopleCount = 0;
 
     List<ChatModel.Comment> comments = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.d("GroupMessageActivity","GroupMessageActivity실행");
+        Log.d("GroupMessageActivity", "GroupMessageActivity실행");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_message);
         destinationRoom = getIntent().getStringExtra("destinationRoom");
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        editText = (EditText)findViewById(R.id.groupMessageActivity_editText);
+        editText = (EditText) findViewById(R.id.groupMessageActivity_editText);
         FirebaseDatabase.getInstance().getReference().child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot item : dataSnapshot.getChildren()){
+                for (DataSnapshot item : dataSnapshot.getChildren()) {
                     users.put(item.getKey(), item.getValue(UserModel.class));
                 }
                 init();
@@ -97,9 +98,18 @@ public class GroupMessageActivity extends AppCompatActivity {
 
             }
         });
+        Button outbutton = findViewById(R.id.groupMessageActivity_goout);
+        outbutton.setOnClickListener(new View.OnClickListener() {
+            ChatModel chatModel = new ChatModel();
+            @Override
+            public void onClick(View view) {
+               //나가기 버튼 눌렸을때
+            }
+        });
 
     }
-    void init(){
+
+    void init() {
         Button button = (Button) findViewById(R.id.groupMessageActivity_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,8 +126,8 @@ public class GroupMessageActivity extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 Map<String, Boolean> map = (Map<String, Boolean>) dataSnapshot.getValue(); //users 안에있는 아이디에 접근
 
-                                for(String item : map.keySet()){
-                                    if (item.equals(uid)){ //자신 uid일 경우 알림 안보냄
+                                for (String item : map.keySet()) {
+                                    if (item.equals(uid)) { //자신 uid일 경우 알림 안보냄
                                         continue;
                                     }
                                     sendFcm(users.get(item).pushToken);
@@ -137,8 +147,8 @@ public class GroupMessageActivity extends AppCompatActivity {
         });
     }
 
-    void sendFcm(String pushToken){
-        Log.d("messageactivity","sendfcm 실행");
+    void sendFcm(String pushToken) {
+        Log.d("messageactivity", "sendfcm 실행");
         Gson gson = new Gson();
         String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();//보내는사람 이름 ->자기이름
 
@@ -154,11 +164,11 @@ public class GroupMessageActivity extends AppCompatActivity {
 
 
         RequestBody requestBody;
-        requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf8"),gson.toJson(notificationModel));
+        requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf8"), gson.toJson(notificationModel));
 
         Request request = new Request.Builder()
-                .header("Content-Type","application/json")
-                .addHeader("Authorization","key=AAAAoA9ZGIw:APA91bGiCXwLXctrY1eMUlQm_xh1zeRvSkH1J2FBdL-auP436KqFSYKcpzxpyMr1eAm0WfBkMqOLuvin_sMzSQZ8osD6udzXiGR9AhHRYtaR0iJE-yxvzq6eEGcOxIdzO9hAPqVbSHWA")
+                .header("Content-Type", "application/json")
+                .addHeader("Authorization", "key=AAAAoA9ZGIw:APA91bGiCXwLXctrY1eMUlQm_xh1zeRvSkH1J2FBdL-auP436KqFSYKcpzxpyMr1eAm0WfBkMqOLuvin_sMzSQZ8osD6udzXiGR9AhHRYtaR0iJE-yxvzq6eEGcOxIdzO9hAPqVbSHWA")
                 .url("https://fcm.googleapis.com/fcm/send")
                 .post(requestBody)
                 .build();
@@ -176,12 +186,14 @@ public class GroupMessageActivity extends AppCompatActivity {
             }
         });
     }
-    class GroupMessageRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
-        public GroupMessageRecyclerViewAdapter(){
+    class GroupMessageRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+        public GroupMessageRecyclerViewAdapter() {
             getMessageList();
         }
-        void getMessageList(){
+
+        void getMessageList() {
             databaseReference = FirebaseDatabase.getInstance().getReference().child("chatrooms").child(destinationRoom).child("comments");
             valueEventListener = databaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -189,7 +201,7 @@ public class GroupMessageActivity extends AppCompatActivity {
                     comments.clear();
                     Map<String, Object> readUsersMap = new HashMap<>();
 
-                    for(DataSnapshot item : dataSnapshot.getChildren()){
+                    for (DataSnapshot item : dataSnapshot.getChildren()) {
                         String key = item.getKey();
                         ChatModel.Comment comment_origin = item.getValue(ChatModel.Comment.class);
                         ChatModel.Comment comment_motify = item.getValue(ChatModel.Comment.class);
@@ -199,11 +211,11 @@ public class GroupMessageActivity extends AppCompatActivity {
                         comments.add(comment_origin);
 
                     }
-                    Log.d("값 확인","comments size : "+comments.size());
-                    if(comments.size()-1 > 0) {
-                        Log.d("messageactivity","comments.size 가 0이 아님");
+                    Log.d("값 확인", "comments size : " + comments.size());
+                    if (comments.size() - 1 > 0) {
+                        Log.d("messageactivity", "comments.size 가 0이 아님");
                         //-1
-                        if (!comments.get(comments.size()-1).readUsers.containsKey(uid)) {//여기
+                        if (!comments.get(comments.size() - 1).readUsers.containsKey(uid)) {//여기
                             FirebaseDatabase.getInstance().getReference().child("chatrooms").child(destinationRoom).child("comments").updateChildren(readUsersMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -232,7 +244,7 @@ public class GroupMessageActivity extends AppCompatActivity {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message,parent,false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_message, parent, false);
 
 
             return new GroupMessageViewHolder(view);
@@ -240,10 +252,10 @@ public class GroupMessageActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            GroupMessageViewHolder messageViewHolder =  ((GroupMessageViewHolder)holder);
+            GroupMessageViewHolder messageViewHolder = ((GroupMessageViewHolder) holder);
 
             //내가 보낸 메세지
-            if(comments.get(position).uid.equals(uid)){
+            if (comments.get(position).uid.equals(uid)) {
                 Glide.with(holder.itemView.getContext()).load(users.get(comments.get(position).uid).profileImageUrl).into(messageViewHolder.imageView_profile);
                 messageViewHolder.textView_message.setText(comments.get(position).message);
                 messageViewHolder.textView_message.setBackgroundResource(R.drawable.rightbubble);
@@ -253,7 +265,7 @@ public class GroupMessageActivity extends AppCompatActivity {
                 setReadCounter(position, messageViewHolder.textView_readCounter_left);
 
                 //상대방이 보낸 메세지
-            }else{
+            } else {
                 Glide.with(holder.itemView.getContext()).load(users.get(comments.get(position).uid).profileImageUrl).into(messageViewHolder.imageView_profile);
                 messageViewHolder.textView_name.setText(users.get(comments.get(position).uid).userName);
                 messageViewHolder.linearLayout_destination.setVisibility(View.VISIBLE);
@@ -272,13 +284,13 @@ public class GroupMessageActivity extends AppCompatActivity {
 
         }
 
-        void setReadCounter(final int position, final TextView textView){
-            if(peopleCount == 0) {
+        void setReadCounter(final int position, final TextView textView) {
+            if (peopleCount == 0) {
                 FirebaseDatabase.getInstance().getReference().child("chatrooms").child(destinationRoom).child("users").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Map<String, Boolean> users = (Map<String, Boolean>) dataSnapshot.getValue();
-                        peopleCount =  users.size();
+                        peopleCount = users.size();
                         int count = peopleCount - comments.get(position).readUsers.size();
                         if (count > 0) {
                             textView.setVisibility(View.VISIBLE);
@@ -293,7 +305,7 @@ public class GroupMessageActivity extends AppCompatActivity {
 
                     }
                 });
-            }else{
+            } else {
                 int count = peopleCount - comments.get(position).readUsers.size();
                 if (count > 0) {
                     textView.setVisibility(View.VISIBLE);
@@ -319,16 +331,17 @@ public class GroupMessageActivity extends AppCompatActivity {
             public TextView textView_timestamp;
             public TextView textView_readCounter_left;
             public TextView textView_readCounter_right;
+
             public GroupMessageViewHolder(View view) {
                 super(view);
 
                 textView_message = (TextView) view.findViewById(R.id.messageItem_textView_message);
                 textView_name = (TextView) view.findViewById(R.id.messageitem_textview_name);
-                linearLayout_destination= (LinearLayout)view.findViewById(R.id.messageItem_linearlayout_destination);
-                linearLayout_main = (LinearLayout)view.findViewById(R.id.messageItem_linearlayout_main);
-                textView_timestamp = (TextView)view.findViewById(R.id.messageItem_textView_timestamp);
-                textView_readCounter_left = (TextView)view.findViewById(R.id.messageItem_textView_readCounter_left);
-                textView_readCounter_right = (TextView)view.findViewById(R.id.messageItem_textView_readCounter_right);
+                linearLayout_destination = (LinearLayout) view.findViewById(R.id.messageItem_linearlayout_destination);
+                linearLayout_main = (LinearLayout) view.findViewById(R.id.messageItem_linearlayout_main);
+                textView_timestamp = (TextView) view.findViewById(R.id.messageItem_textView_timestamp);
+                textView_readCounter_left = (TextView) view.findViewById(R.id.messageItem_textView_readCounter_left);
+                textView_readCounter_right = (TextView) view.findViewById(R.id.messageItem_textView_readCounter_right);
                 imageView_profile = (ImageView) view.findViewById(R.id.messageitem_imageview);
 
             }
