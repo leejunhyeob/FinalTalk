@@ -106,11 +106,14 @@ public class MessageActivity extends AppCompatActivity {
                     } else {
                         ChatModel.Comment comment = new ChatModel.Comment();
                         comment.uid = uid;
-                        comment.message = editText.getText().toString();
-                        comment.timestamp = ServerValue.TIMESTAMP; // firebase 에서 제공하는 시간
-                        FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments").push().setValue(comment);
-                        sendFcm();
-                        editText.setText(null);
+                        comment.message = editText.getText().toString().trim();
+                        if(!comment.message.equals("")){
+                            comment.timestamp = ServerValue.TIMESTAMP; // firebase 에서 제공하는 시간
+                            FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments").push().setValue(comment);
+                            sendFcm();
+                            editText.setText(null);
+                        }
+
 
                     }
                     checkChatRoom();
@@ -126,7 +129,6 @@ public class MessageActivity extends AppCompatActivity {
                 ChatModel chatModel = new ChatModel();
                 chatModel.users.put(uid, true);
                 chatModel.users.put(destinatonUid, true);
-
                 if (chatRoomUid == null) {
                     button.setEnabled(false);
                     FirebaseDatabase.getInstance().getReference().child("chatrooms").push().setValue(chatModel).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -144,9 +146,15 @@ public class MessageActivity extends AppCompatActivity {
                 } else {
                     ChatModel.Comment comment = new ChatModel.Comment();
                     comment.uid = uid;
-                    comment.message = editText.getText().toString();
+                    comment.message = editText.getText().toString().trim();
+                    if(comment.message.equals("")){
+                        Log.d("asdfasdf","빈칸");
+                        return;
+                    }
+                    Log.d("asdfasdf","빈칸아님");
                     comment.timestamp = ServerValue.TIMESTAMP; // firebase 에서 제공하는 시간
                     FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments").push().setValue(comment);
+
                     sendFcm();
                     editText.setText(null);
 

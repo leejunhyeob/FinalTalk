@@ -41,7 +41,7 @@ public class MainActitivy extends AppCompatActivity {
                     case R.id.action_people:
                         getFragmentManager().beginTransaction().replace(R.id.submainactivity_framelayout, new PeopleFragment()).commit();
                         Intent intent = new Intent(MainActitivy.this, MainActitivy.class);
-                        startActivity(intent);
+                        //startActivity(intent);
                         return true;
 
                     case R.id.action_chat:
@@ -53,14 +53,14 @@ public class MainActitivy extends AppCompatActivity {
                         return true;
 
                     case R.id.action_logout:
-                        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid(); // 로그인한 uid
-                        FirebaseAuth auth = FirebaseAuth.getInstance();
-                        Map<String, Object> map = new HashMap<>(); //firebase 토큰은 해쉬맵으로만 가져올수가 있다함
-                        map.put("pushToken", null); // 기기 토큰값을 넣어줌
-                        FirebaseDatabase.getInstance().getReference().child("users").child(uid).updateChildren(map);
-                        auth.signOut();
-                        intent = new Intent(MainActitivy.this, LoginActivity.class);
-                        startActivity(intent);
+                          String uid = FirebaseAuth.getInstance().getCurrentUser().getUid(); // 로그인한 uid
+                          FirebaseAuth auth = FirebaseAuth.getInstance();
+                          Map<String, Object> map = new HashMap<>(); //firebase 토큰은 해쉬맵으로만 가져올수가 있다함
+                          map.put("pushToken", null); // 기기 토큰값을 넣어줌
+                          FirebaseDatabase.getInstance().getReference().child("users").child(uid).updateChildren(map);
+                          auth.signOut();
+                          intent = new Intent(MainActitivy.this, LoginActivity.class);
+                          startActivity(intent);
                         finish();
                         return true;
                 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="70dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -12,29 +12,48 @@
             android:id="@+id/chatitem_textview_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:text="방 이름" />
+            android:text="방 이름"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/chatitem_textview_people"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/chatitem_textview_lastMessage"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="1dp"
+            android:text="방"
+            android:textColor="#ff0000"
+            android:textSize="20dp" />
 
         <TextView
             android:id="@+id/chatitem_textview_lastMessage"
-            android:text="마지막 메세지"
+            android:layout_width="221dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/chatitem_textview_title"
-            android:textColor="@android:color/darker_gray"
             android:layout_marginTop="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:text="마지막 메세지"
+            android:textColor="@android:color/darker_gray" />
 
         <TextView
 
             android:id="@+id/chatitem_textview_timestamp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="10dp"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="10dp"
-            android:text="2011.11.11 11:11"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="10dp"
+            android:text="2011.11.11 11:11"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="10dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:background="#000000" />
     </RelativeLayout>
 
 

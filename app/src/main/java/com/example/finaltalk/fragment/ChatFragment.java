@@ -112,12 +112,6 @@ public class ChatFragment extends Fragment {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     UserModel userModel = dataSnapshot.getValue(UserModel.class);
-                    FirebaseStorage.getInstance().getReference().child("userImages").child(uid);
-
-//                    Glide.with(customViewHolder.itemView.getContext())
-//                            .load(userModel.profileImageUrl)
-//                            .apply(new RequestOptions().circleCrop())
-//                            .into(customViewHolder.imageView);
 
                     customViewHolder.textView_title.setText(userModel.userName);
 
@@ -152,9 +146,11 @@ public class ChatFragment extends Fragment {
                     if (chatModels.get(position).users.size() > 2) { //단체방
                         intent = new Intent(view.getContext(), GroupMessageActivity.class);
                         intent.putExtra("destinationRoom", keys.get(position));
+                        customViewHolder.textView_people.setText("단체방");
                     } else {
                         intent = new Intent(view.getContext(), MessageActivity.class);
                         intent.putExtra("destinationUid", destinationUsers.get(position));
+                        customViewHolder.textView_people.setText("개인방");
                     }
 
                     ActivityOptions activityOptions = null;
@@ -178,6 +174,7 @@ public class ChatFragment extends Fragment {
             public TextView textView_title;
             public TextView textView_last_message;
             public TextView textView_timestamp;
+            public TextView textView_people;
 
             public CustomViewHolder(View view) {
                 super(view);
@@ -185,6 +182,7 @@ public class ChatFragment extends Fragment {
                 textView_title = (TextView) view.findViewById(R.id.chatitem_textview_title);
                 textView_last_message = (TextView) view.findViewById(R.id.chatitem_textview_lastMessage);
                 textView_timestamp = (TextView) view.findViewById(R.id.chatitem_textview_timestamp);
+                textView_people = (TextView) view.findViewById(R.id.chatitem_textview_people);
             }
         }
     }
