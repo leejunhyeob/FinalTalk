@@ -24,7 +24,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -131,7 +130,11 @@ public class ChatFragment extends Fragment {
                 String lastMessageKey = (String) commentMap.keySet().toArray()[0];  //ArrayIndexOutOfBoundsException:
                 customViewHolder.textView_last_message.setText(chatModels.get(position).comments.get(lastMessageKey).message);
 
-
+                if(chatModels.get(position).users.size() > 2){
+                    customViewHolder.textView_people.setText("단체방");
+                }else{
+                    customViewHolder.textView_people.setText("개인방");
+                }
                 //TimeStamp
                 simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
                 long unixTime = (long) chatModels.get(position).comments.get(lastMessageKey).timestamp;
@@ -146,11 +149,11 @@ public class ChatFragment extends Fragment {
                     if (chatModels.get(position).users.size() > 2) { //단체방
                         intent = new Intent(view.getContext(), GroupMessageActivity.class);
                         intent.putExtra("destinationRoom", keys.get(position));
-                        customViewHolder.textView_people.setText("단체방");
+
                     } else {
                         intent = new Intent(view.getContext(), MessageActivity.class);
                         intent.putExtra("destinationUid", destinationUsers.get(position));
-                        customViewHolder.textView_people.setText("개인방");
+
                     }
 
                     ActivityOptions activityOptions = null;

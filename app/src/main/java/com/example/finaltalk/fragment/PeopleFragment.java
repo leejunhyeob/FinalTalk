@@ -16,7 +16,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.finaltalk.MainActitivy;
 import com.example.finaltalk.R;
 import com.example.finaltalk.SearchAdapter;
 import com.example.finaltalk.chat.MessageActivity;
@@ -64,10 +62,10 @@ public class PeopleFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.peoplefragment_recyclerview);
         search = (EditText) view.findViewById(R.id.peoplefragment_search);
-        listView = (ListView) view.findViewById(R.id.listView);
         searchbtn = (Button) view.findViewById(R.id.peoplefragment_searchbtn);
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         recyclerView.setAdapter(new PeopleFragmentRecyclerViewAdapter());
+
 
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.peoplefragment_floatingButton);
@@ -77,22 +75,6 @@ public class PeopleFragment extends Fragment {
                 startActivity(new Intent(view.getContext(), SelectFriendActivity.class));
             }
         });
-
-        searchbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (TextUtils.isEmpty(search.getText().toString())) {
-                    Log.d("peoplefragment", "검색칸 null");
-                    return;
-                } else {
-                    //productQuery = mDatabase.orderByChild("userName").startAt(search.getText().toString()).endAt(search.getText().toString() + "\uf8ff");
-                    //productQuery = mDatabase.child("users").orderByChild("name").equalTo(search.getText().toString());
-                    //mDatabase.child("users").orderByChild("userName").equalTo(search.getText().toString());
-                    //Log.d("peoplefragment", "productQuery:   " + productQuery);
-                }
-            }
-        });
-
         return view;
     }
 
@@ -114,10 +96,62 @@ public class PeopleFragment extends Fragment {
 
         List<UserModel> userModels;
 
+
+
         public PeopleFragmentRecyclerViewAdapter() {
             userModels = new ArrayList<>();
-            final String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+            searchbtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (TextUtils.isEmpty(search.getText().toString())) {
+                        final String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+
+                        FirebaseDatabase.getInstance().getReference().child("users").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                mStorageRef = FirebaseStorage.getInstance().getReference();
+
+                                userModels.clear();
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                                    UserModel userModel = snapshot.getValue(UserModel.class);
+                                    userModels.add(userModel);
+                                }
+                                notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                            }
+                        });
+                        return;
+                    }
+                    else {
+                        Log.d("검색","검색어내용 "+search.getText().toString());
+                        Query query = mDatabase.child("users").orderByChild("userName").equalTo(search.getText().toString());
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                userModels.clear();
+                                for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                                    UserModel userModel = snapshot.getValue(UserModel.class);
+                                    userModels.add(userModel);
+
+                                    Log.d("검색","검색성공");
+                                }
+                                notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                Log.d("검색","검색실패");
+                            }
+                        });
+                    }
+                }
+            });
             FirebaseDatabase.getInstance().getReference().child("users").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

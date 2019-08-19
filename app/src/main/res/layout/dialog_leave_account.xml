@@ -3,16 +3,17 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/accountFragment_button_comment"
+    <ImageView
+        android:src="@drawable/image"
+        android:background="#FFFFBB33"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="상태 메세지 변경" />
+        android:layout_height="64dp" />
 
-    <Button
-        android:id="@+id/accountFragment_button_Leave_Account"
+    <TextView
+        android:id="@+id/commentDialog_edittext"
+        android:text="탈퇴 하시겠습니까?"
+        android:layout_margin="4dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="계정 탈퇴"/>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

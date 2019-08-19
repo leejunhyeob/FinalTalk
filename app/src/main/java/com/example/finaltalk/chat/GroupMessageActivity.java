@@ -30,6 +30,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
@@ -76,6 +77,7 @@ public class GroupMessageActivity extends AppCompatActivity {
         Log.d("GroupMessageActivity", "GroupMessageActivity실행");
 
         super.onCreate(savedInstanceState);
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         setContentView(R.layout.activity_group_message);
         destinationRoom = getIntent().getStringExtra("destinationRoom");
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -154,7 +156,7 @@ public class GroupMessageActivity extends AppCompatActivity {
 
 
         NotificationModel notificationModel = new NotificationModel();
-        //notificationModel.to =  FirebaseDatabase.getInstance().getReference().child("users").child(destinatonUid).
+
 
         notificationModel.to = pushToken; //받는사람 토큰 id -> firebase database에서 가져와야함함
         notificationModel.notification.title = userName;

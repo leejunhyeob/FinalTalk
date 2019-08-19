@@ -6,29 +6,17 @@
     android:layout_height="match_parent">
 
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/peoplefragment_recyclerview"
-        android:layout_marginTop="100dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </androidx.recyclerview.widget.RecyclerView>
+        android:layout_height="685dp"
+        android:layout_marginTop="59dp"></androidx.recyclerview.widget.RecyclerView>
 
     <EditText
         android:id="@+id/peoplefragment_search"
         android:layout_width="330dp"
         android:layout_height="58dp"
-        android:hint="검색" />
-    <ListView
-        android:id="@+id/listView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="630dp"
-        android:divider="#999999"
-        android:dividerHeight="1dp">
-
-    </ListView>
+        android:hint="이름 검색" />
 
     <Button
         android:id="@+id/peoplefragment_searchbtn"

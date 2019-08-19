@@ -54,6 +54,7 @@ public class SelectFriendActivity extends AppCompatActivity {
                 String myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 chatModel.users.put(myUid, true);
                 Log.d("selectfriendactivity", "myUid 추가 완료");
+                Log.d("selectfriendactivity", "채팅방 생성 완료");
                 FirebaseDatabase.getInstance().getReference().child("chatrooms").push().setValue(chatModel);
             }
         });
