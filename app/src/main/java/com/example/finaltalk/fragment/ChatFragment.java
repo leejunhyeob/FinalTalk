@@ -71,11 +71,13 @@ public class ChatFragment extends Fragment {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     chatModels.clear();
+                    //keys.clear();
                     for (DataSnapshot item : dataSnapshot.getChildren()) {
                         chatModels.add(item.getValue(ChatModel.class));
-                        keys.add(item.getKey());
+                        keys.add(item.getKey());  //위 query 문에 해당하는걸 불러옴 -> firebase안에 챗룸에 자신의 uid가 해당된 챗룸을 가져옴
+                        Log.d("chatfragment", "item.getKey()); " + item.getKey());
                     }
-                    notifyDataSetChanged();
+                    notifyDataSetChanged(); //recyclerview 업데이트
                 }
 
                 @Override
@@ -83,14 +85,12 @@ public class ChatFragment extends Fragment {
 
                 }
             });
-
-
         }
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat, parent, false);
-
+            // XML에 정의된 것들을 view의 형태로 변환
             return new CustomViewHolder(view);
         }
 
@@ -122,6 +122,7 @@ public class ChatFragment extends Fragment {
                 }
             });
 
+
             //메시지를 내림 차순으로 정렬 후 마지막 메세지의 키값을 가져옴
             Map<String, ChatModel.Comment> commentMap = new TreeMap<>(Collections.reverseOrder());
             commentMap.putAll(chatModels.get(position).comments);
@@ -130,9 +131,9 @@ public class ChatFragment extends Fragment {
                 String lastMessageKey = (String) commentMap.keySet().toArray()[0];  //ArrayIndexOutOfBoundsException:
                 customViewHolder.textView_last_message.setText(chatModels.get(position).comments.get(lastMessageKey).message);
 
-                if(chatModels.get(position).users.size() > 2){
+                if (chatModels.get(position).users.size() > 2) {
                     customViewHolder.textView_people.setText("단체방");
-                }else{
+                } else {
                     customViewHolder.textView_people.setText("개인방");
                 }
                 //TimeStamp
@@ -145,10 +146,18 @@ public class ChatFragment extends Fragment {
             customViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    Log.d("chatfragment", "N번째 방 클릭  -> N: " + position);
+                    Log.d("chatfragment", "해당 방 인원수 : " + chatModels.get(position).users.size());
+
+                    Log.d("chatfragment", "인원 Uid값 "+chatModels.get(position).users.toString());
+                    Log.d("chatfragment", "채팅 내역 "+chatModels.get(position).comments.toString());
+
                     Intent intent = null;
                     if (chatModels.get(position).users.size() > 2) { //단체방
                         intent = new Intent(view.getContext(), GroupMessageActivity.class);
-                        intent.putExtra("destinationRoom", keys.get(position));
+                        intent.putExtra("destinationRoom", keys.get(position)); //intent로 값 전달
+
 
                     } else {
                         intent = new Intent(view.getContext(), MessageActivity.class);

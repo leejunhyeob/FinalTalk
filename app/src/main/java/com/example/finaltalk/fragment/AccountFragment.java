@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +53,7 @@ public class AccountFragment extends Fragment {
                         for(DataSnapshot snapshot: dataSnapshot.getChildren()){
                             snapshot.getRef().removeValue();
                         }
-                        //var user = firebase.auth().currentUser;
+
                     }
 
                     @Override

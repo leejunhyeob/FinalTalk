@@ -66,8 +66,6 @@ public class PeopleFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
         recyclerView.setAdapter(new PeopleFragmentRecyclerViewAdapter());
 
-
-
         FloatingActionButton floatingActionButton = (FloatingActionButton) view.findViewById(R.id.peoplefragment_floatingButton);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,9 +93,6 @@ public class PeopleFragment extends Fragment {
 
 
         List<UserModel> userModels;
-
-
-
         public PeopleFragmentRecyclerViewAdapter() {
             userModels = new ArrayList<>();
 
@@ -159,7 +154,6 @@ public class PeopleFragment extends Fragment {
 
                     userModels.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
                         UserModel userModel = snapshot.getValue(UserModel.class);
                         userModels.add(userModel);
                     }
@@ -185,10 +179,15 @@ public class PeopleFragment extends Fragment {
 
             String nUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             Uri imageurl = Uri.parse(userModels.get(position).profileImageUrl);
+            Log.d("REDERROR","nuid : " +nUid + " " + position);
+
 
             if (nUid.equals(userModels.get(position).uid)) {
                 ((CustomViewHolder) holder).textView.setTextColor(Color.RED);
+                Log.d("REDERROR","userModels.get(position).uid : " + userModels.get(position).uid );
+
             }
+
 
             ((CustomViewHolder) holder).textView.setText(userModels.get(position).userName + "(" + userModels.get(position).email + ")");
             Glide.with(PeopleFragment.this).load(imageurl).into(((CustomViewHolder) holder).imageView);
@@ -212,8 +211,13 @@ public class PeopleFragment extends Fragment {
             }
         }
 
+
+
+
+
         @Override
         public int getItemCount() {
+            Log.d("count","size"+userModels.size());
             return userModels.size();
         }
 

@@ -135,12 +135,6 @@ public class MessageActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(Void aVoid) {
                             checkChatRoom();
-//                            try {
-//                                sleep(2000);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
-//                            button.performClick(); //버튼 한번더 강제 클릭
                         }
                     });
                 } else {
@@ -172,7 +166,6 @@ public class MessageActivity extends AppCompatActivity {
 
 
         NotificationModel notificationModel = new NotificationModel();
-        //notificationModel.to =  FirebaseDatabase.getInstance().getReference().child("users").child(destinatonUid).
 
         notificationModel.to = destinationUserModel.pushToken; //받는사람 토큰 id -> firebase database에서 가져와야함함
         notificationModel.notification.title = userName;
@@ -277,7 +270,7 @@ public class MessageActivity extends AppCompatActivity {
                         ChatModel.Comment comment_motify = item.getValue(ChatModel.Comment.class);
                         comment_motify.readUsers.put(uid, true);
 
-                        readUsersMap.put(key, comment_motify);
+                        readUsersMap.put(key, comment_motify); //읽은사람
                         comments.add(comment_origin);
 
                     }
@@ -360,10 +353,11 @@ public class MessageActivity extends AppCompatActivity {
                         peopleCount = users.size();
                         int count = peopleCount - comments.get(position).readUsers.size();
                         if (count > 0) {
-                            textView.setVisibility(View.VISIBLE);
+                            textView.setVisibility(View.VISIBLE); //보이게
                             textView.setText(String.valueOf(count));
                         } else {
-                            textView.setVisibility(View.INVISIBLE);
+                            textView.setVisibility(View.INVISIBLE); //안보이게
+
                         }
                     }
 

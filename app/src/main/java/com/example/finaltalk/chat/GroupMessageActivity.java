@@ -77,18 +77,25 @@ public class GroupMessageActivity extends AppCompatActivity {
         Log.d("GroupMessageActivity", "GroupMessageActivity실행");
 
         super.onCreate(savedInstanceState);
-        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+//        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
         setContentView(R.layout.activity_group_message);
         destinationRoom = getIntent().getStringExtra("destinationRoom");
+        Log.d("groupmessage" ,"destinationroom: "+destinationRoom);
+
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         editText = (EditText) findViewById(R.id.groupMessageActivity_editText);
+
         FirebaseDatabase.getInstance().getReference().child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot item : dataSnapshot.getChildren()) {
                     users.put(item.getKey(), item.getValue(UserModel.class));
+
+                    Log.d("GroupMessageActivity", "item.getKey() "+item.getKey()); //회원가입한 모든사람의 uid
+                    Log.d("GroupMessageActivity", "item.getValue(UserModel.class) "+item.getValue(UserModel.class));// 그 사람들에 대한 usermodel
                 }
                 init();
+
                 recyclerView = findViewById(R.id.groupMessageActivity_recyclerview);
                 recyclerView.setAdapter(new GroupMessageRecyclerViewAdapter());
                 recyclerView.setLayoutManager(new LinearLayoutManager(GroupMessageActivity.this));
@@ -215,8 +222,6 @@ public class GroupMessageActivity extends AppCompatActivity {
                     }
                     Log.d("값 확인", "comments size : " + comments.size());
                     if (comments.size() - 1 > 0) {
-                        Log.d("messageactivity", "comments.size 가 0이 아님");
-                        //-1
                         if (!comments.get(comments.size() - 1).readUsers.containsKey(uid)) {//여기
                             FirebaseDatabase.getInstance().getReference().child("chatrooms").child(destinationRoom).child("comments").updateChildren(readUsersMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
@@ -228,7 +233,6 @@ public class GroupMessageActivity extends AppCompatActivity {
                                 }
                             });
                         } else {
-                            Log.d("messageActivity", "아니면 여긴가");
                             notifyDataSetChanged();//메세지 갱신
                             recyclerView.scrollToPosition(comments.size() - 1);
                         }

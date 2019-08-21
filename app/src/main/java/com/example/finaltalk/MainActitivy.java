@@ -61,6 +61,7 @@ public class MainActitivy extends AppCompatActivity {
                           map.put("pushToken", null); // 기기 토큰값을 넣어줌
                           FirebaseDatabase.getInstance().getReference().child("users").child(uid).updateChildren(map);
                           auth.signOut();
+
                           finish();
                           intent = new Intent(MainActitivy.this, LoginActivity.class);
                           startActivity(intent);
